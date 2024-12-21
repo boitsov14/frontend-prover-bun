@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "dev": "bun build src/index.ts --outdir src/static/js --minify --watch",
+    "check": "bun biome check --write src",
+    "bundle": "bun build src/index.ts --outdir src/static/js --minify"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "latest",
+    "@tsconfig/bun": "latest",
+    "@tsconfig/strictest": "latest",
+    "@types/bun": "latest"
+  }
+}
