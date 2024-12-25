@@ -14,7 +14,8 @@
         "noUndeclaredVariables": "off"
       },
       "style": {
-        "noDefaultExport": "off"
+        "noDefaultExport": "off",
+        "noNonNullAssertion": "off"
       },
       "suspicious": {
         "noConsole": "off"

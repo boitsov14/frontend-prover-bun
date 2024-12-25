@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "dev": "bun build src/index.ts --outdir src/static/js --minify --watch",
+    "dev": "bun build --experimental-html --experimental-css src/index.html --outdir=dist --watch",
     "check": "bun biome check --write src",
-    "bundle": "bun build src/index.ts --outdir src/static/js --minify"
+    "bundle": "bun build --experimental-html --experimental-css src/index.html --outdir=dist"
   },
   "devDependencies": {
     "@biomejs/biome": "latest",

@@ -11,6 +11,63 @@
     <title>Cool Prover</title>
   </head>
   <body>
-    <main></main>
+    <main>
+      <form id="prover-form">
+        <fieldset>
+          <legend>Prover Language:</legend>
+          <input
+            type="radio"
+            id="kotlin"
+            name="prover-language"
+            value="kotlin"
+            checked
+          />
+          <label for="kotlin">Kotlin</label>
+          <input type="radio" id="rust" name="prover-language" value="rust" />
+          <label for="rust">Rust (preview)</label>
+
+          <legend>LaTeX:</legend>
+          <input
+            type="checkbox"
+            id="sequent-calculus"
+            name="latex"
+            value="sequent-calculus"
+            checked
+          />
+          <label for="sequent-calculus">Sequent Calculus</label>
+          <input
+            type="checkbox"
+            id="tableau"
+            name="latex"
+            value="tableau"
+            checked
+          />
+          <label for="tableau">Tableau</label>
+
+          <legend>Timeout:</legend>
+          <input type="radio" id="3s" name="timeout" value="3" checked />
+          <label for="3s">3s</label>
+          <input type="radio" id="5s" name="timeout" value="5" />
+          <label for="5s">5s</label>
+          <input type="radio" id="10s" name="timeout" value="10" />
+          <label for="10s">10s</label>
+
+          <legend>Debug Mode:</legend>
+          <input type="checkbox" id="debug" />
+          <label for="debug">Print trace</label>
+
+          <legend>Input formula:</legend>
+          <textarea
+            name="formula"
+            maxlength="10000"
+            placeholder="all x P(x) -> ex x P(x)"
+            rows="3"
+            required
+          ></textarea>
+        </fieldset>
+        <button aria-busy="true" type="submit">Submit</button>
+        <button type="submit">Submit</button>
+      </form>
+    </main>
   </body>
 </html>
