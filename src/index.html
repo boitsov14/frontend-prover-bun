@@ -3,71 +3,106 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script defer src="./index.ts" type="module"></script>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css"
     />
-    <script src="./index.ts" type="module"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.css"
+      integrity="sha384-veTAhWILPOotXm+kbR5uY7dRamYLJf58I7P+hJhjeuc7hsMAkJHTsPahAl0hBST0"
+      crossorigin="anonymous"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.js"
+      integrity="sha384-v6mkHYHfY/4BWq54f7lQAdtIsoZZIByznQ3ZqN38OL4KCsrxo31SLlPiak7cj/Mg"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/contrib/auto-render.min.js"
+      integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+      crossorigin="anonymous"
+      onload="renderMathInElement(document.body)"
+    ></script>
     <title>Cool Prover</title>
   </head>
   <body>
     <main>
+      <h1>Cool Prover</h1>
       <form id="prover-form">
         <fieldset>
-          <legend>Prover Language:</legend>
-          <input
-            type="radio"
-            id="kotlin"
-            name="prover-language"
-            value="kotlin"
-            checked
-          />
-          <label for="kotlin">Kotlin</label>
-          <input type="radio" id="rust" name="prover-language" value="rust" />
-          <label for="rust">Rust (preview)</label>
-
-          <legend>LaTeX:</legend>
-          <input
-            type="checkbox"
-            id="sequent-calculus"
-            name="latex"
-            value="sequent-calculus"
-            checked
-          />
-          <label for="sequent-calculus">Sequent Calculus</label>
-          <input
-            type="checkbox"
-            id="tableau"
-            name="latex"
-            value="tableau"
-            checked
-          />
-          <label for="tableau">Tableau</label>
-
-          <legend>Timeout:</legend>
-          <input type="radio" id="3s" name="timeout" value="3" checked />
-          <label for="3s">3s</label>
-          <input type="radio" id="5s" name="timeout" value="5" />
-          <label for="5s">5s</label>
-          <input type="radio" id="10s" name="timeout" value="10" />
-          <label for="10s">10s</label>
-
-          <legend>Debug Mode:</legend>
-          <input type="checkbox" id="debug" />
-          <label for="debug">Print trace</label>
-
-          <legend>Input formula:</legend>
           <textarea
-            name="formula"
+            id="formula"
             maxlength="10000"
             placeholder="all x P(x) -> ex x P(x)"
             rows="3"
+            spellcheck="false"
+            oninvalid="this.setCustomValidity('Enter a formula.')"
             required
           ></textarea>
+          <details>
+            <summary>Options</summary>
+            <legend>Prover Language:</legend>
+            <input
+              type="radio"
+              id="kotlin"
+              name="prover-language"
+              value="kotlin"
+              checked
+            />
+            <label for="kotlin">Kotlin</label>
+            <input type="radio" id="rust" name="prover-language" value="rust" />
+            <label for="rust">Rust (preview)</label>
+
+            <legend>LaTeX:</legend>
+            <input
+              type="checkbox"
+              id="sequent-calculus"
+              name="latex"
+              value="sequent-calculus"
+              checked
+            />
+            <label for="sequent-calculus">Sequent Calculus</label>
+            <input
+              type="checkbox"
+              id="tableau"
+              name="latex"
+              value="tableau"
+              checked
+            />
+            <label for="tableau">Tableau</label>
+
+            <legend>Timeout:</legend>
+            <input type="radio" id="3s" name="timeout" value="3" checked />
+            <label for="3s">3s</label>
+            <input type="radio" id="5s" name="timeout" value="5" />
+            <label for="5s">5s</label>
+            <input type="radio" id="10s" name="timeout" value="10" />
+            <label for="10s">10s</label>
+
+            <legend>Debug Mode:</legend>
+            <input type="checkbox" id="debug" />
+            <label for="debug">Print trace</label>
+          </details>
         </fieldset>
-        <button aria-busy="true" type="submit">Submit</button>
+        <!-- <button aria-busy="true" type="submit">Submit</button> -->
         <button type="submit">Submit</button>
       </form>
+      <h3>Examples (click!):</h3>
+      <ul>
+        <li>
+          <a href="#" onclick="set('∀xP(x)')">\( \forall x P(x) \)</a>
+        </li>
+        <li>
+          <a href="#" onclick="set('∃xP(x)')">\( \exists x P(x) \)</a>
+        </li>
+        <li>
+          <a href="#" onclick="set('P(x) ∨ Q(x)')">\( P(x) \land Q(x) \)</a>
+        </li>
+      </ul>
     </main>
   </body>
 </html>
