@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,13 +28,15 @@
       onload="renderMathInElement(document.body)"
     ></script>
     <title>Cool Prover</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --pico-font-family: "Roboto Mono", monospace;
+        --pico-font-family: "Roboto";
       }
     </style>
   </head>
@@ -65,24 +67,6 @@
             <label for="kotlin">Kotlin</label>
             <input type="radio" id="rust" name="prover-language" value="rust" />
             <label for="rust">Rust (preview)</label>
-
-            <legend>LaTeX:</legend>
-            <input
-              type="checkbox"
-              id="sequent-calculus"
-              name="latex"
-              value="sequent-calculus"
-              checked
-            />
-            <label for="sequent-calculus">Sequent Calculus</label>
-            <input
-              type="checkbox"
-              id="tableau"
-              name="latex"
-              value="tableau"
-              checked
-            />
-            <label for="tableau">Tableau</label>
 
             <legend>Timeout:</legend>
             <input type="radio" id="3s" name="timeout" value="3" checked />
@@ -124,10 +108,6 @@
       <h3>Syntax Sugars:</h3>
       <table>
         <tr>
-          <th>Symbol</th>
-          <th>Alternatives</th>
-        </tr>
-        <tr>
           <td>\( \lnot \)</td>
           <td>~, not</td>
         </tr>
@@ -161,6 +141,18 @@
         </tr>
       </table>
       also support LaTeX syntax
+      <h3>Description:</h3>
+      <p>Cool Prover is a theorem prover for first-order logic.</p>
+      <h3>Links:</h3>
+      <p>
+        <a href="https://twitter.com/your_twitter_handle">作者のTwitter</a
+        ><br />
+        <a href="https://github.com/your_github_repository">GitHub(Rust)</a
+        ><br />
+        <a href="https://github.com/your_github_repository">GitHub(Kotlin)</a
+        ><br />
+        <a href="https://your_support_link">サポート</a>
+      </p>
     </main>
   </body>
 </html>
