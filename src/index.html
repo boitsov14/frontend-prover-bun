@@ -28,6 +28,15 @@
       onload="renderMathInElement(document.body)"
     ></script>
     <title>Cool Prover</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --pico-font-family: "Roboto Mono", monospace;
+      }
+    </style>
   </head>
   <body>
     <main>
@@ -102,7 +111,56 @@
         <li>
           <a href="#" onclick="set('P(x) ∨ Q(x)')">\( P(x) \land Q(x) \)</a>
         </li>
+        <li>
+          <a href="#" onclick="set('P(x) ∨ Q(x)')"
+            >\( P \land Q \land Q \land Q \land Q \land Q \land Q \land Q \land
+            Q \land Q \land Q \land Q \land Q \land Q \land Q \)</a
+          >
+        </li>
+        <li>
+          <a href="#" onclick="set('P(x) ∨ Q(x)')">\( P(x) \land Q(x) \)</a>
+        </li>
       </ul>
+      <h3>Syntax Sugars:</h3>
+      <table>
+        <tr>
+          <th>Symbol</th>
+          <th>Alternatives</th>
+        </tr>
+        <tr>
+          <td>\( \lnot \)</td>
+          <td>~, not</td>
+        </tr>
+        <tr>
+          <td>\( \land \)</td>
+          <td>/\, &, and</td>
+        </tr>
+        <tr>
+          <td>\( \lor \)</td>
+          <td>\/, |, or</td>
+        </tr>
+        <tr>
+          <td>\( \to \)</td>
+          <td>->, =>, to</td>
+        </tr>
+        <tr>
+          <td>\( \leftrightarrow \)</td>
+          <td><->, <=>, iff</td>
+        </tr>
+        <tr>
+          <td>\( \forall \)</td>
+          <td>!, all</td>
+        </tr>
+        <tr>
+          <td>\( \exists \)</td>
+          <td>?, ex</td>
+        </tr>
+        <tr>
+          <td>\( \vdash \)</td>
+          <td>|-</td>
+        </tr>
+      </table>
+      also support LaTeX syntax
     </main>
   </body>
 </html>
