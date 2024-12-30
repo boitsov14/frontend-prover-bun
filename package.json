@@ -2,7 +2,8 @@
   "scripts": {
     "dev": "bun build --experimental-html --experimental-css src/index.html --outdir=dist --watch",
     "check": "bun biome check --write src",
-    "bundle": "bun build --experimental-html --experimental-css src/index.html --outdir=dist"
+    "bundle": "bun build --experimental-html --experimental-css src/index.html --outdir=dist",
+    "serve": "bunx serve dist/"
   },
   "devDependencies": {
     "@biomejs/biome": "latest",
