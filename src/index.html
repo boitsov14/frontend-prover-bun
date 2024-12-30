@@ -3,11 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cool Prover</title>
     <script defer src="./index.ts" type="module"></script>
+    <!-- pico.css -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css"
     />
+    <!-- google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --pico-font-family: "Roboto";
+      }
+    </style>
+    <!-- katex -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.css"
@@ -27,35 +42,24 @@
       crossorigin="anonymous"
       onload="renderMathInElement(document.body)"
     ></script>
-    <title>Cool Prover</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --pico-font-family: "Roboto";
-      }
-    </style>
   </head>
   <body>
     <main>
       <h1>Cool Prover</h1>
       <form id="prover-form">
         <fieldset>
+          <!-- formula textarea -->
           <textarea
-            id="formula"
+            name="formula"
             maxlength="10000"
             placeholder="all x P(x) -> ex x P(x)"
             rows="3"
             spellcheck="false"
-            oninvalid="this.setCustomValidity('Enter a formula.')"
             required
           ></textarea>
           <details>
             <summary>Options</summary>
+            <!-- Prover Language -->
             <legend>Prover Language:</legend>
             <input
               type="radio"
@@ -67,7 +71,7 @@
             <label for="kotlin">Kotlin</label>
             <input type="radio" id="rust" name="prover-language" value="rust" />
             <label for="rust">Rust (preview)</label>
-
+            <!-- Timeout -->
             <legend>Timeout:</legend>
             <input type="radio" id="3s" name="timeout" value="3" checked />
             <label for="3s">3s</label>
@@ -75,9 +79,9 @@
             <label for="5s">5s</label>
             <input type="radio" id="10s" name="timeout" value="10" />
             <label for="10s">10s</label>
-
+            <!-- Debug Mode -->
             <legend>Debug Mode:</legend>
-            <input type="checkbox" id="debug" />
+            <input type="checkbox" id="debug" name="debug" />
             <label for="debug">Print trace</label>
           </details>
         </fieldset>
