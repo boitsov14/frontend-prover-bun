@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cool Prover</title>
     <script defer src="./index.ts" type="module"></script>
+    <!-- favicon -->
+    <link rel="icon" href="data:," />
     <!-- pico.css -->
     <link
       rel="stylesheet"
@@ -51,6 +53,7 @@
           <!-- formula textarea -->
           <legend>Enter a formula:</legend>
           <textarea
+            id="formula"
             name="formula"
             maxlength="10000"
             placeholder="all x P(x) -> ex x P(x)"
@@ -87,27 +90,27 @@
           </details>
         </fieldset>
         <!-- <button aria-busy="true" type="submit">Prove</button> -->
-        <button type="submit">Prove</button>
+        <button id="prove" type="submit">Prove</button>
       </form>
       <h3>Examples (click!):</h3>
       <ul>
         <li>
-          <a href="#" onclick="set('∀xP(x)')">\( \forall x P(x) \)</a>
+          <a href="#" data-formula="∀xP(x)">\( \forall x P(x) \)</a>
         </li>
         <li>
-          <a href="#" onclick="set('∃xP(x)')">\( \exists x P(x) \)</a>
+          <a href="#" data-formula="∃xP(x)">\( \exists x P(x) \)</a>
         </li>
         <li>
-          <a href="#" onclick="set('P(x) ∨ Q(x)')">\( P(x) \land Q(x) \)</a>
+          <a href="#" data-formula="P(x) ∨ Q(x)">\( P(x) \land Q(x) \)</a>
         </li>
         <li>
-          <a href="#" onclick="set('P(x) ∨ Q(x)')"
+          <a href="#" data-formula="P(x) ∨ Q(x)"
             >\( P \land Q \land Q \land Q \land Q \land Q \land Q \land Q \land
             Q \land Q \land Q \land Q \land Q \land Q \land Q \)</a
           >
         </li>
         <li>
-          <a href="#" onclick="set('P(x) ∨ Q(x)')">\( P(x) \land Q(x) \)</a>
+          <a href="#" data-formula="P(x) ∨ Q(x)">\( P(x) \land Q(x) \)</a>
         </li>
       </ul>
       <h3>Syntax Sugars:</h3>
