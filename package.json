@@ -3,12 +3,17 @@
     "dev": "bun build --experimental-html --experimental-css src/index.html --outdir=dist --watch",
     "check": "bun biome check --write src",
     "bundle": "bun build --experimental-html --experimental-css src/index.html --outdir=dist",
-    "serve": "bunx serve dist/"
+    "serve": "reload --browser --dir dist"
+  },
+  "dependencies": {
+    "alpinejs": "latest"
   },
   "devDependencies": {
     "@biomejs/biome": "latest",
     "@tsconfig/bun": "latest",
     "@tsconfig/strictest": "latest",
-    "@types/bun": "latest"
+    "@types/alpinejs": "latest",
+    "@types/bun": "latest",
+    "reload": "latest"
   }
 }
