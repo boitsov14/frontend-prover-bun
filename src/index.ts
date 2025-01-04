@@ -1,10 +1,16 @@
 import Alpine from 'alpinejs'
+import 'katex/dist/katex.min.css'
+import renderMathInElement from 'katex/contrib/auto-render'
 
 Alpine.data('prover', () => ({
   formula: '',
   isLoading: false,
 
   init() {
+    // render KaTeX
+    renderMathInElement(document.body, {
+      delimiters: [{ left: '$', right: '$', display: false }],
+    })
     // get formula from url parameter
     const formula = new URLSearchParams(location.search).get('formula')
     if (formula) {

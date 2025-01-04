@@ -16,34 +16,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
     />
     <style>
       :root {
         --pico-font-family: "Roboto";
       }
     </style>
-    <!-- katex -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.css"
-      integrity="sha384-veTAhWILPOotXm+kbR5uY7dRamYLJf58I7P+hJhjeuc7hsMAkJHTsPahAl0hBST0"
-      crossorigin="anonymous"
-    />
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/katex.min.js"
-      integrity="sha384-v6mkHYHfY/4BWq54f7lQAdtIsoZZIByznQ3ZqN38OL4KCsrxo31SLlPiak7cj/Mg"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/katex@0.16.18/dist/contrib/auto-render.min.js"
-      integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
-      crossorigin="anonymous"
-      onload="renderMathInElement(document.body)"
-    ></script>
   </head>
   <body>
     <main>
@@ -94,13 +74,19 @@
       <h3>Examples (click!):</h3>
       <ul>
         <li>
-          <a href="#" @click="proveFormula('∀xP(x)')">\( \forall x P(x) \)</a>
+          <a href="#" @click="proveFormula('∀xP(x)')">$\forall x P(x)$</a>
         </li>
         <li>
-          <a href="#" @click="proveFormula('∃xP(x)')">\( \exists x P(x) \)</a>
+          <a href="#" @click="proveFormula('∃xP(x)')">$\exists x P(x)$</a>
         </li>
         <li>
-          <a href="#" @click="proveFormula('P ∨ Q')">\( P \lor Q \)</a>
+          <a href="#" @click="proveFormula('P ∨ Q')">$P \lor Q$</a>
+        </li>
+      </ul>
+      <h3>Counter Examples (click!):</h3>
+      <ul>
+        <li>
+          <a href="#" @click="proveFormula('∀xP(x)')">$\forall x P(x)$</a>
         </li>
       </ul>
       <h3>Syntax Sugars:</h3>
