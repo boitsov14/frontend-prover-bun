@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" x-data="prover">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -48,18 +48,18 @@
   <body>
     <main>
       <h1>Cool Prover</h1>
-      <form id="prover-form">
+      <form @submit.prevent="prove">
         <fieldset>
           <!-- formula textarea -->
           <legend>Enter a formula:</legend>
           <textarea
-            id="formula"
             name="formula"
             maxlength="10000"
             placeholder="all x P(x) -> ex x P(x)"
             rows="3"
             spellcheck="false"
             required
+            x-model="formula"
           ></textarea>
           <details>
             <summary>Options</summary>
@@ -68,12 +68,12 @@
             <input
               type="radio"
               id="kotlin"
-              name="prover-language"
+              name="lang"
               value="kotlin"
               checked
             />
             <label for="kotlin">Kotlin</label>
-            <input type="radio" id="rust" name="prover-language" value="rust" />
+            <input type="radio" id="rust" name="lang" value="rust" />
             <label for="rust">Rust (preview)</label>
             <!-- Timeout -->
             <legend>Timeout:</legend>
@@ -89,28 +89,18 @@
             <label for="debug">Print trace</label>
           </details>
         </fieldset>
-        <!-- <button aria-busy="true" type="submit">Prove</button> -->
-        <button id="prove" type="submit">Prove</button>
+        <button type="submit" :aria-busy="isLoading">Prove</button>
       </form>
       <h3>Examples (click!):</h3>
       <ul>
         <li>
-          <a href="#" data-formula="∀xP(x)">\( \forall x P(x) \)</a>
+          <a href="#" @click="proveFormula('∀xP(x)')">\( \forall x P(x) \)</a>
         </li>
         <li>
-          <a href="#" data-formula="∃xP(x)">\( \exists x P(x) \)</a>
+          <a href="#" @click="proveFormula('∃xP(x)')">\( \exists x P(x) \)</a>
         </li>
         <li>
-          <a href="#" data-formula="P(x) ∨ Q(x)">\( P(x) \land Q(x) \)</a>
-        </li>
-        <li>
-          <a href="#" data-formula="P(x) ∨ Q(x)"
-            >\( P \land Q \land Q \land Q \land Q \land Q \land Q \land Q \land
-            Q \land Q \land Q \land Q \land Q \land Q \land Q \)</a
-          >
-        </li>
-        <li>
-          <a href="#" data-formula="P(x) ∨ Q(x)">\( P(x) \land Q(x) \)</a>
+          <a href="#" @click="proveFormula('P ∨ Q')">\( P \lor Q \)</a>
         </li>
       </ul>
       <h3>Syntax Sugars:</h3>
