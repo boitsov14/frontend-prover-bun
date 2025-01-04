@@ -2,8 +2,5 @@
   "extends": [
     "@tsconfig/bun/tsconfig.json",
     "@tsconfig/strictest/tsconfig.json"
-  ],
-  "compilerOptions": {
-    "lib": ["dom", "dom.Iterable"]
-  }
+  ]
 }
