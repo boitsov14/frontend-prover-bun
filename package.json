@@ -6,7 +6,8 @@
     "serve": "reload --browser --dir dist"
   },
   "dependencies": {
-    "alpinejs": "latest"
+    "alpinejs": "latest",
+    "katex": "latest"
   },
   "devDependencies": {
     "@biomejs/biome": "latest",
@@ -14,6 +15,7 @@
     "@tsconfig/strictest": "latest",
     "@types/alpinejs": "latest",
     "@types/bun": "latest",
+    "@types/katex": "latest",
     "reload": "latest"
   }
 }
