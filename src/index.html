@@ -45,28 +45,33 @@
             <summary>Options</summary>
             <!-- Prover Language -->
             <legend>Prover Language:</legend>
-            <input
-              type="radio"
-              id="kotlin"
-              name="lang"
-              value="kotlin"
-              checked
-            />
-            <label for="kotlin">Kotlin</label>
-            <input type="radio" id="rust" name="lang" value="rust" />
-            <label for="rust">Rust (preview)</label>
+            <label>
+              <input type="radio" name="lang" value="kotlin" checked />
+              Kotlin
+            </label>
+            <label>
+              <input type="radio" name="lang" value="rust" />
+              Rust (preview)
+            </label>
             <!-- Timeout -->
             <legend>Timeout:</legend>
-            <input type="radio" id="3s" name="timeout" value="3" checked />
-            <label for="3s">3s</label>
-            <input type="radio" id="5s" name="timeout" value="5" />
-            <label for="5s">5s</label>
-            <input type="radio" id="10s" name="timeout" value="10" />
-            <label for="10s">10s</label>
-            <!-- Debug Mode -->
+            <label>
+              <input type="radio" name="timeout" value="3" checked />
+              3s
+            </label>
+            <label>
+              <input type="radio" name="timeout" value="5" />
+              5s
+            </label>
+            <label>
+              <input type="radio" name="timeout" value="10" />
+              10s
+            </label>
             <legend>Debug Mode:</legend>
-            <input type="checkbox" id="debug" name="debug" />
-            <label for="debug">Print trace</label>
+            <label>
+              <input type="checkbox" name="debug" checked />
+              Print trace
+            </label>
           </details>
         </fieldset>
         <button type="submit" :aria-busy="isLoading">Prove</button>
@@ -92,35 +97,35 @@
       <h3>Syntax Sugars:</h3>
       <table>
         <tr>
-          <td>\( \lnot \)</td>
+          <td>$\lnot$</td>
           <td>~, not</td>
         </tr>
         <tr>
-          <td>\( \land \)</td>
+          <td>$\land$</td>
           <td>/\, &, and</td>
         </tr>
         <tr>
-          <td>\( \lor \)</td>
+          <td>$\lor$</td>
           <td>\/, |, or</td>
         </tr>
         <tr>
-          <td>\( \to \)</td>
+          <td>$\to$</td>
           <td>->, =>, to</td>
         </tr>
         <tr>
-          <td>\( \leftrightarrow \)</td>
+          <td>$\leftrightarrow$</td>
           <td><->, <=>, iff</td>
         </tr>
         <tr>
-          <td>\( \forall \)</td>
+          <td>$\forall$</td>
           <td>!, all</td>
         </tr>
         <tr>
-          <td>\( \exists \)</td>
+          <td>$\exists$</td>
           <td>?, ex</td>
         </tr>
         <tr>
-          <td>\( \vdash \)</td>
+          <td>$\vdash$</td>
           <td>|-</td>
         </tr>
       </table>
