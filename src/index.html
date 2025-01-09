@@ -46,31 +46,46 @@
             <!-- Prover Language -->
             <legend>Prover Language:</legend>
             <label>
-              <input type="radio" name="lang" value="kotlin" checked />
+              <input
+                type="radio"
+                name="lang"
+                value="kotlin"
+                x-model="lang"
+                checked
+              />
               Kotlin
             </label>
             <label>
-              <input type="radio" name="lang" value="rust" />
+              <input type="radio" name="lang" value="rust" x-model="lang" />
               Rust (preview)
             </label>
             <!-- LaTeX -->
             <legend>LaTeX:</legend>
-            <label>
-              <input type="checkbox" name="latex" value="sequent" checked />
-              Sequent Calculus
-            </label>
-            <label>
-              <input type="checkbox" name="latex" value="tableau" checked />
-              Tableau
-            </label>
-            <label>
-              <input type="checkbox" name="latex" value="bussproofs" checked />
-              bussproofs
-            </label>
-            <label>
-              <input type="checkbox" name="latex" value="ebproof" checked />
-              ebproof
-            </label>
+            <div x-show="lang === 'rust'">
+              <label>
+                <input type="checkbox" name="latex" value="sequent" checked />
+                Sequent Calculus
+              </label>
+              <label>
+                <input type="checkbox" name="latex" value="tableau" checked />
+                Tableau
+              </label>
+            </div>
+            <div x-show="lang === 'kotlin'">
+              <label>
+                <input
+                  type="checkbox"
+                  name="latex"
+                  value="bussproofs"
+                  checked
+                />
+                bussproofs
+              </label>
+              <label>
+                <input type="checkbox" name="latex" value="ebproof" checked />
+                ebproof
+              </label>
+            </div>
             <!-- Timeout -->
             <legend>Timeout:</legend>
             <label>

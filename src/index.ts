@@ -13,8 +13,9 @@ const ky = _ky.create({
 
 Alpine.data('prover', () => ({
   formula: '',
-  isLoading: false,
+  lang: 'kotlin',
   status: 'Prove',
+  isLoading: false,
 
   init() {
     // render KaTeX
