@@ -16,6 +16,7 @@ Alpine.data('prover', () => ({
   lang: 'kotlin',
   status: 'Prove',
   isLoading: false,
+  result: '',
 
   init() {
     // render KaTeX
@@ -43,6 +44,7 @@ Alpine.data('prover', () => ({
   async prove() {
     this.status = 'Proving'
     this.isLoading = true
+    this.result = 'Proving...\n'
     // update url
     history.pushState({}, '', `?formula=${encodeURIComponent(this.formula)}`)
     // create form data
@@ -54,6 +56,7 @@ Alpine.data('prover', () => ({
     // notify
     ky.post(NOTIFICATION_URL, { body: formData })
     await new Promise(resolve => setTimeout(resolve, 1000))
+    this.result += 'Proved'
     this.status = 'Generating SVG'
     await new Promise(resolve => setTimeout(resolve, 1000))
     this.status = 'Prove'

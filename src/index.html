@@ -109,6 +109,9 @@
         </fieldset>
         <button type="submit" :aria-busy="isLoading" x-text="status"></button>
       </form>
+      <div x-show="result !== ''">
+        <pre x-text="result"></pre>
+      </div>
       <h3>Examples (click!):</h3>
       <ul>
         <li>
