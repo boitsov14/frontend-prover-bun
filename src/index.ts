@@ -14,6 +14,7 @@ const ky = _ky.create({
 Alpine.data('prover', () => ({
   formula: '',
   isLoading: false,
+  status: 'Prove',
 
   init() {
     // render KaTeX
@@ -39,6 +40,7 @@ Alpine.data('prover', () => ({
   },
 
   async prove() {
+    this.status = 'Proving'
     this.isLoading = true
     // update url
     history.pushState({}, '', `?formula=${encodeURIComponent(this.formula)}`)
@@ -50,6 +52,10 @@ Alpine.data('prover', () => ({
     })
     // notify
     ky.post(NOTIFICATION_URL, { body: formData })
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    this.status = 'Generating SVG'
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    this.status = 'Prove'
     this.isLoading = false
   },
 }))
