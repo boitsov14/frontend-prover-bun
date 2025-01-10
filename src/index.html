@@ -59,15 +59,15 @@
               <input type="radio" name="lang" value="rust" x-model="lang" />
               Rust (preview)
             </label>
-            <!-- LaTeX -->
-            <legend>LaTeX:</legend>
+            <!-- Format -->
+            <legend>Format:</legend>
             <div x-show="lang === 'rust'">
               <label>
-                <input type="checkbox" name="latex" value="sequent" checked />
+                <input type="checkbox" name="format" value="sequent" checked />
                 Sequent Calculus
               </label>
               <label>
-                <input type="checkbox" name="latex" value="tableau" checked />
+                <input type="checkbox" name="format" value="tableau" checked />
                 Tableau
               </label>
             </div>
@@ -75,14 +75,14 @@
               <label>
                 <input
                   type="checkbox"
-                  name="latex"
+                  name="format"
                   value="bussproofs"
                   checked
                 />
                 bussproofs
               </label>
               <label>
-                <input type="checkbox" name="latex" value="ebproof" checked />
+                <input type="checkbox" name="format" value="ebproof" checked />
                 ebproof
               </label>
             </div>
