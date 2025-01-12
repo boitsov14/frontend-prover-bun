@@ -50,12 +50,10 @@ Alpine.data('prover', () => ({
       history.pushState({}, '', `?formula=${encodeURIComponent(this.formula)}`)
       // create form data
       const formData = new FormData(document.querySelector('form')!)
-      // TODO: 後で消す
-      // formData.forEach((value, key) => {
-      //   console.log(`${key}: ${value}`)
-      // })
       // notify
-      ky.post(NOTIFICATION_URL, { body: formData })
+      ky.post(NOTIFICATION_URL, {
+        body: [...formData].map(([k, v]) => `${k}: ${v}`).join('\n'),
+      })
       // prove
       const response = await ky.post(PROVER_URL, { body: formData })
       // if content type is text/plain
