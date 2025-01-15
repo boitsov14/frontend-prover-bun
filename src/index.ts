@@ -2,9 +2,10 @@ import Alpine from 'alpinejs'
 import 'katex/dist/katex.min.css'
 import renderMathInElement from 'katex/contrib/auto-render'
 import _ky from 'ky'
+import { z } from 'zod'
 
 const PROVER_URL = 'http://localhost:3000'
-const NOTIFICATION_URL = 'http://localhost:8787/text'
+const NOTIFICATION_URL = 'http://localhost:8787'
 
 // override ky
 const ky = _ky.create({
@@ -43,33 +44,51 @@ Alpine.data('prover', () => ({
 
   async prove() {
     try {
+      // set status
       this.status = 'Proving'
+      // set loading true
       this.isLoading = true
-      this.result = 'Proving...\n'
+      // clear result
+      this.result = ''
       // update url
       history.pushState({}, '', `?formula=${encodeURIComponent(this.formula)}`)
       // create form data
       const formData = new FormData(document.querySelector('form')!)
       // notify
-      ky.post(NOTIFICATION_URL, {
+      ky.post(`${NOTIFICATION_URL}/text`, {
         body: [...formData].map(([k, v]) => `${k}: ${v}`).join('\n'),
       })
       // prove
       const response = await ky.post(PROVER_URL, { body: formData })
-      // if content type is text/plain
-      if (response.headers.get('content-type') === 'text/plain') {
-        const text = await response.text()
-        this.result += text
-        return
+      // get json
+      const json = await response.json()
+      // parse json
+      const { text, bussproofs, ebproof } = z
+        .object({
+          text: z.string(),
+          bussproofs: z.string().optional(),
+          ebproof: z.string().optional(),
+        })
+        .parse(json)
+      // notify
+      ky.post(`${NOTIFICATION_URL}/text`, {
+        body: `text: ${text}\n${bussproofs ? 'bussproofs' : ''}\n${ebproof ? 'ebproof' : ''}`,
+      })
+      // set result
+      this.result += text
+      // notify
+      if (bussproofs) {
+        ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: bussproofs })
       }
-      // const json = await response.json()
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      this.result += 'Proved\n'
+      if (ebproof) {
+        ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: ebproof })
+      }
+      // set status
       this.status = 'Generating SVG'
       await new Promise(resolve => setTimeout(resolve, 1000))
     } catch (e) {
       // notify
-      ky.post(NOTIFICATION_URL, { body: `${e}` })
+      ky.post(`${NOTIFICATION_URL}/text`, { body: `${e}` })
       this.result += 'Failed: Unexpected error\n'
     } finally {
       this.status = 'Prove'
