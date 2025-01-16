@@ -5,7 +5,7 @@ import _ky from 'ky'
 import { z } from 'zod'
 
 const PROVER_URL = 'http://localhost:3000'
-const NOTIFICATION_URL = 'http://localhost:8787'
+// const NOTIFICATION_URL = 'http://localhost:8787'
 
 // override ky
 const ky = _ky.create({
@@ -63,9 +63,10 @@ Alpine.data('prover', () => ({
       const preNotification = [...formData]
         .map(([k, v]) => `${k}: ${v}`)
         .join('\n')
-      ky.post(`${NOTIFICATION_URL}/text`, {
-        body: preNotification,
-      })
+      // ky.post(`${NOTIFICATION_URL}/text`, {
+      //   body: preNotification,
+      // })
+      // biome-ignore lint/suspicious/noConsole:
       console.debug(preNotification)
       // prove
       const response = await ky.post(PROVER_URL, {
@@ -83,28 +84,30 @@ Alpine.data('prover', () => ({
         })
         .parse(json)
       // notify
-      const postNotification = `text: ${text}\n${bussproofs ? 'bussproofs' : ''}\n${ebproof ? 'ebproof' : ''}`
-      ky.post(`${NOTIFICATION_URL}/text`, {
-        body: postNotification,
-      })
-      console.log(postNotification)
+      const postNotification = `result:\n${text}bussproofs: ${bussproofs ? 'on' : ''}\nebproof: ${ebproof ? 'on' : ''}`
+      // ky.post(`${NOTIFICATION_URL}/text`, {
+      //   body: postNotification,
+      // })
+      // biome-ignore lint/suspicious/noConsole:
+      console.debug(postNotification)
       // set result
       this.result += text
       // notify
-      if (bussproofs) {
-        ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: bussproofs })
-      }
-      if (ebproof) {
-        ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: ebproof })
-      }
+      // if (bussproofs) {
+      //   ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: bussproofs })
+      // }
+      // if (ebproof) {
+      //   ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: ebproof })
+      // }
       // set status
       this.status = 'Generating SVG'
       await new Promise(resolve => setTimeout(resolve, 1000))
     } catch (e) {
       // notify
-      ky.post(`${NOTIFICATION_URL}/text`, {
-        body: `Browser: Unexpected error: ${e}`,
-      })
+      // ky.post(`${NOTIFICATION_URL}/text`, {
+      //   body: `Browser: Unexpected error: ${e}`,
+      // })
+      // biome-ignore lint/suspicious/noConsole: <explanation>
       console.error(e)
       this.result += 'Failed: Unexpected error\n'
     } finally {
