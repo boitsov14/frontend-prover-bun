@@ -104,11 +104,13 @@
               />
               10s
             </label>
-            <legend>Debug Mode:</legend>
-            <label>
-              <input type="checkbox" x-model="debug" />
-              Print trace
-            </label>
+            <div x-show="lang === 'rust'">
+              <legend>Debug Mode:</legend>
+              <label>
+                <input type="checkbox" x-model="debug" />
+                Print trace
+              </label>
+            </div>
           </details>
         </fieldset>
         <button type="submit" :aria-busy="isLoading" x-text="status"></button>
