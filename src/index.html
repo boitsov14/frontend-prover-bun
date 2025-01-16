@@ -33,7 +33,6 @@
           <!-- formula textarea -->
           <legend>Enter a formula:</legend>
           <textarea
-            name="formula"
             maxlength="10000"
             placeholder="all x P(x) -> ex x P(x)"
             rows="3"
@@ -46,13 +45,7 @@
             <!-- Prover Language -->
             <legend>Prover Language:</legend>
             <label>
-              <input
-                type="radio"
-                name="lang"
-                value="kotlin"
-                x-model="lang"
-                checked
-              />
+              <input type="radio" name="lang" value="kotlin" x-model="lang" />
               Kotlin
             </label>
             <label>
@@ -63,21 +56,21 @@
             <legend>Format:</legend>
             <div x-show="lang === 'rust'">
               <label>
-                <input type="checkbox" name="sequent" checked />
+                <input type="checkbox" x-model="sequent" />
                 Sequent Calculus
               </label>
               <label>
-                <input type="checkbox" name="tableau" checked />
+                <input type="checkbox" x-model="tableau" />
                 Tableau
               </label>
             </div>
             <div x-show="lang === 'kotlin'">
               <label>
-                <input type="checkbox" name="bussproofs" checked />
+                <input type="checkbox" x-model="bussproofs" />
                 bussproofs
               </label>
               <label>
-                <input type="checkbox" name="ebproof" />
+                <input type="checkbox" x-model="ebproof" />
                 ebproof
               </label>
             </div>
@@ -113,7 +106,7 @@
             </label>
             <legend>Debug Mode:</legend>
             <label>
-              <input type="checkbox" name="debug" />
+              <input type="checkbox" x-model="debug" />
               Print trace
             </label>
           </details>
@@ -126,19 +119,19 @@
       <h3>Examples (click!):</h3>
       <ul>
         <li>
-          <a href="#" @click="proveFormula('∀xP(x)')">$\forall x P(x)$</a>
+          <a @click="proveFormula('∀xP(x)')">$\forall x P(x)$</a>
         </li>
         <li>
-          <a href="#" @click="proveFormula('∃xP(x)')">$\exists x P(x)$</a>
+          <a @click="proveFormula('∃xP(x)')">$\exists x P(x)$</a>
         </li>
         <li>
-          <a href="#" @click="proveFormula('P ∨ Q')">$P \lor Q$</a>
+          <a @click="proveFormula('P ∨ Q')">$P \lor Q$</a>
         </li>
       </ul>
       <h3>Counter Examples (click!):</h3>
       <ul>
         <li>
-          <a href="#" @click="proveFormula('∀xP(x)')">$\forall x P(x)$</a>
+          <a @click="proveFormula('∀xP(x)')">$\forall x P(x)$</a>
         </li>
       </ul>
       <h3>Syntax Sugars:</h3>

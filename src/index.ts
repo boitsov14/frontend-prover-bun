@@ -5,17 +5,29 @@ import _ky from 'ky'
 import { z } from 'zod'
 
 const PROVER_URL = 'http://localhost:3000'
-// const NOTIFICATION_URL = 'http://localhost:8787'
+const NOTIFICATION_URL = 'http://localhost:8787'
 
 // override ky
 const ky = _ky.create({
   retry: { methods: ['post'] },
 })
 
+interface Request {
+  formula: string
+  timeout: number
+  format: string[]
+  debug?: boolean
+}
+
 Alpine.data('prover', () => ({
   formula: '',
   lang: 'kotlin',
+  sequent: true,
+  tableau: true,
+  bussproofs: true,
+  ebproof: false,
   timeout: 3,
+  debug: false,
   status: 'Prove',
   isLoading: false,
   result: '',
@@ -34,20 +46,19 @@ Alpine.data('prover', () => ({
     }
   },
 
-  async proveFormula(formula: string) {
+  proveFormula(formula: string) {
     // set formula
     this.formula = formula
-    // wait for DOM update
-    await this.$nextTick()
     // submit form
     this.prove()
   },
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity:
   async prove() {
     try {
-      // close details if open
-      const details = document.querySelector('details')!
-      details.open = false
+      // close details
+      document.querySelector('details')!.open = false
+      // scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' })
       // set status
       this.status = 'Proving'
@@ -57,58 +68,81 @@ Alpine.data('prover', () => ({
       this.result = ''
       // update url
       history.pushState({}, '', `?formula=${encodeURIComponent(this.formula)}`)
-      // create form data
-      const formData = new FormData(document.querySelector('form')!)
+      // create json
+      const json: Request = {
+        formula: this.formula,
+        timeout: this.timeout,
+        format: [],
+      }
+      if (this.lang === 'rust') {
+        if (this.sequent) {
+          json.format.push('sequent')
+        }
+        if (this.tableau) {
+          json.format.push('tableau')
+        }
+        json.debug = this.debug
+      } else if (this.lang === 'kotlin') {
+        if (this.bussproofs) {
+          json.format.push('bussproofs')
+        }
+        if (this.ebproof) {
+          json.format.push('ebproof')
+        }
+      }
       // notify
-      const preNotification = [...formData]
-        .map(([k, v]) => `${k}: ${v}`)
-        .join('\n')
-      // ky.post(`${NOTIFICATION_URL}/text`, {
-      //   body: preNotification,
-      // })
+      const preNotification = JSON.stringify(
+        { lang: this.lang, ...json },
+        null,
+        4,
+      )
+      ky.post(`${NOTIFICATION_URL}/text`, { body: preNotification })
       // biome-ignore lint/suspicious/noConsole:
       console.debug(preNotification)
       // prove
       const response = await ky.post(PROVER_URL, {
-        body: formData,
+        json: json,
         timeout: this.timeout * 1000 + 5000,
       })
-      // get json
-      const json = await response.json()
       // parse json
-      const { text, bussproofs, ebproof } = z
+      const { text, sequent, tableau, bussproofs, ebproof } = z
         .object({
           text: z.string(),
+          sequent: z.string().optional(),
+          tableau: z.string().optional(),
           bussproofs: z.string().optional(),
           ebproof: z.string().optional(),
         })
-        .parse(json)
+        .parse(await response.json())
       // notify
-      const postNotification = `result:\n${text}bussproofs: ${bussproofs ? 'on' : ''}\nebproof: ${ebproof ? 'on' : ''}`
-      // ky.post(`${NOTIFICATION_URL}/text`, {
-      //   body: postNotification,
-      // })
+      ky.post(`${NOTIFICATION_URL}/text`, { body: text })
       // biome-ignore lint/suspicious/noConsole:
-      console.debug(postNotification)
+      console.debug(text)
       // set result
       this.result += text
       // notify
-      // if (bussproofs) {
-      //   ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: bussproofs })
-      // }
-      // if (ebproof) {
-      //   ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: ebproof })
-      // }
+      if (sequent) {
+        ky.post(`${NOTIFICATION_URL}/tex-to-svg`, { body: sequent })
+      }
+      if (tableau) {
+        ky.post(`${NOTIFICATION_URL}/tex-to-svg`, { body: tableau })
+      }
+      if (bussproofs) {
+        ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: bussproofs })
+      }
+      if (ebproof) {
+        ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: ebproof })
+      }
       // set status
       this.status = 'Generating SVG'
       await new Promise(resolve => setTimeout(resolve, 1000))
     } catch (e) {
       // notify
-      // ky.post(`${NOTIFICATION_URL}/text`, {
-      //   body: `Browser: Unexpected error: ${e}`,
-      // })
+      ky.post(`${NOTIFICATION_URL}/text`, {
+        body: `Browser: Unexpected error: ${e}`,
+      })
       // biome-ignore lint/suspicious/noConsole: <explanation>
-      console.error(e)
+      console.debug(`Browser: Unexpected error: ${e}`)
       this.result += 'Failed: Unexpected error\n'
     } finally {
       this.status = 'Prove'
