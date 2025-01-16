@@ -77,22 +77,38 @@
                 bussproofs
               </label>
               <label>
-                <input type="checkbox" name="ebproof" checked />
+                <input type="checkbox" name="ebproof" />
                 ebproof
               </label>
             </div>
             <!-- Timeout -->
             <legend>Timeout:</legend>
             <label>
-              <input type="radio" name="timeout" value="3" checked />
+              <input
+                type="radio"
+                name="timeout"
+                value="3"
+                x-model.number="timeout"
+                checked
+              />
               3s
             </label>
             <label>
-              <input type="radio" name="timeout" value="5" />
+              <input
+                type="radio"
+                name="timeout"
+                value="5"
+                x-model.number="timeout"
+              />
               5s
             </label>
             <label>
-              <input type="radio" name="timeout" value="10" />
+              <input
+                type="radio"
+                name="timeout"
+                value="10"
+                x-model.number="timeout"
+              />
               10s
             </label>
             <legend>Debug Mode:</legend>

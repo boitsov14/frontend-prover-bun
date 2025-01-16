@@ -15,6 +15,7 @@ const ky = _ky.create({
 Alpine.data('prover', () => ({
   formula: '',
   lang: 'kotlin',
+  timeout: 3,
   status: 'Prove',
   isLoading: false,
   result: '',
@@ -44,6 +45,10 @@ Alpine.data('prover', () => ({
 
   async prove() {
     try {
+      // close details if open
+      const details = document.querySelector('details')!
+      details.open = false
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       // set status
       this.status = 'Proving'
       // set loading true
@@ -55,11 +60,18 @@ Alpine.data('prover', () => ({
       // create form data
       const formData = new FormData(document.querySelector('form')!)
       // notify
+      const preNotification = [...formData]
+        .map(([k, v]) => `${k}: ${v}`)
+        .join('\n')
       ky.post(`${NOTIFICATION_URL}/text`, {
-        body: [...formData].map(([k, v]) => `${k}: ${v}`).join('\n'),
+        body: preNotification,
       })
+      console.debug(preNotification)
       // prove
-      const response = await ky.post(PROVER_URL, { body: formData })
+      const response = await ky.post(PROVER_URL, {
+        body: formData,
+        timeout: this.timeout * 1000 + 5000,
+      })
       // get json
       const json = await response.json()
       // parse json
@@ -71,9 +83,11 @@ Alpine.data('prover', () => ({
         })
         .parse(json)
       // notify
+      const postNotification = `text: ${text}\n${bussproofs ? 'bussproofs' : ''}\n${ebproof ? 'ebproof' : ''}`
       ky.post(`${NOTIFICATION_URL}/text`, {
-        body: `text: ${text}\n${bussproofs ? 'bussproofs' : ''}\n${ebproof ? 'ebproof' : ''}`,
+        body: postNotification,
       })
+      console.log(postNotification)
       // set result
       this.result += text
       // notify
@@ -88,7 +102,10 @@ Alpine.data('prover', () => ({
       await new Promise(resolve => setTimeout(resolve, 1000))
     } catch (e) {
       // notify
-      ky.post(`${NOTIFICATION_URL}/text`, { body: `${e}` })
+      ky.post(`${NOTIFICATION_URL}/text`, {
+        body: `Browser: Unexpected error: ${e}`,
+      })
+      console.error(e)
       this.result += 'Failed: Unexpected error\n'
     } finally {
       this.status = 'Prove'
