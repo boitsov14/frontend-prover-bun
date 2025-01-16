@@ -1,9 +1,8 @@
 {
   "scripts": {
-    "dev": "bun build --experimental-html --experimental-css src/index.html --outdir=dist --watch",
+    "dev": "concurrently \"bun build --experimental-html --experimental-css src/index.html --outdir=dist --watch\" \"reload --browser --dir dist\"",
     "check": "bun biome check --write src",
-    "bundle": "bun build --experimental-html --experimental-css src/index.html --outdir=dist",
-    "serve": "reload --browser --dir dist"
+    "bundle": "bun build --experimental-html --experimental-css src/index.html --outdir=dist"
   },
   "dependencies": {
     "alpinejs": "latest",
@@ -18,6 +17,7 @@
     "@types/alpinejs": "latest",
     "@types/bun": "latest",
     "@types/katex": "latest",
+    "concurrently": "latest",
     "reload": "latest"
   }
 }
