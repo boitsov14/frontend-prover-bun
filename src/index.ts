@@ -5,6 +5,7 @@ import _ky from 'ky'
 import { z } from 'zod'
 
 const PROVER_URL = 'http://localhost:3000'
+const LATEX_URL = 'http://localhost:3001'
 const NOTIFICATION_URL = 'http://localhost:8787'
 
 // override ky
@@ -31,6 +32,7 @@ Alpine.data('prover', () => ({
   status: 'Prove',
   isLoading: false,
   result: '',
+  svgs: [] as string[],
 
   init() {
     // render KaTeX
@@ -66,6 +68,7 @@ Alpine.data('prover', () => ({
       this.isLoading = true
       // clear result
       this.result = ''
+      this.svgs = []
       // update url
       history.pushState({}, '', `?formula=${encodeURIComponent(this.formula)}`)
       // create json
@@ -91,14 +94,9 @@ Alpine.data('prover', () => ({
         }
       }
       // notify
-      const preNotification = JSON.stringify(
-        { lang: this.lang, ...json },
-        null,
-        4,
-      )
-      ky.post(`${NOTIFICATION_URL}/text`, { body: preNotification })
-      // biome-ignore lint/suspicious/noConsole:
-      console.debug(preNotification)
+      const pre = JSON.stringify({ lang: this.lang, ...json }, null, 4)
+      ky.post(`${NOTIFICATION_URL}/text`, { body: pre })
+      console.debug(pre)
       // prove
       const response = await ky.post(PROVER_URL, {
         json: json,
@@ -116,10 +114,13 @@ Alpine.data('prover', () => ({
         .parse(await response.json())
       // notify
       ky.post(`${NOTIFICATION_URL}/text`, { body: text })
-      // biome-ignore lint/suspicious/noConsole:
       console.debug(text)
       // set result
       this.result += text
+      console.log(sequent)
+      console.log(tableau)
+      console.log(bussproofs)
+      console.log(ebproof)
       // notify
       if (sequent) {
         ky.post(`${NOTIFICATION_URL}/tex-to-svg`, { body: sequent })
@@ -135,18 +136,54 @@ Alpine.data('prover', () => ({
       }
       // set status
       this.status = 'Generating SVG'
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // generate SVG concurrently
+      const promises = [] as Promise<void>[]
+      if (sequent) {
+        promises.push(this.generateSvg(sequent, 'sequent'))
+      }
+      if (tableau) {
+        promises.push(this.generateSvg(tableau, 'tableau'))
+      }
+      if (bussproofs) {
+        promises.push(this.generateSvg(bussproofs, 'bussproofs'))
+      }
+      if (ebproof) {
+        promises.push(this.generateSvg(ebproof, 'ebproof'))
+      }
+      // wait for all promises
+      await Promise.allSettled(promises)
+      // notify
+      ky.post(`${NOTIFICATION_URL}/text`, { body: 'Done' })
     } catch (e) {
       // notify
       ky.post(`${NOTIFICATION_URL}/text`, {
         body: `Browser: Unexpected error: ${e}`,
       })
-      // biome-ignore lint/suspicious/noConsole: <explanation>
       console.debug(`Browser: Unexpected error: ${e}`)
       this.result += 'Failed: Unexpected error\n'
     } finally {
       this.status = 'Prove'
       this.isLoading = false
+    }
+  },
+
+  async generateSvg(tex: string, type: string): Promise<void> {
+    const response = await ky.post(`${LATEX_URL}/svg`, { body: tex })
+    let result = `Generate SVG(${type}):\n`
+    if (response.headers.get('Content-Type') === 'image/svg+xml') {
+      const svg = await response.text()
+      this.svgs.push(svg)
+      result += 'Success'
+      // notify
+      ky.post(`${NOTIFICATION_URL}/text`, { body: result })
+      console.debug(result)
+    } else {
+      const error = await response.text()
+      result += `${error}`
+      this.result += result
+      // notify
+      ky.post(`${NOTIFICATION_URL}/text`, { body: result })
+      console.debug(result)
     }
   },
 }))
