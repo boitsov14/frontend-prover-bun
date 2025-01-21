@@ -5,6 +5,7 @@
     "bundle": "bun build --experimental-html --experimental-css src/index.html --outdir=dist"
   },
   "dependencies": {
+    "@panzoom/panzoom": "latest",
     "alpinejs": "latest",
     "katex": "latest",
     "ky": "latest",

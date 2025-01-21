@@ -1,12 +1,13 @@
 import Alpine from 'alpinejs'
 import 'katex/dist/katex.min.css'
+import Panzoom from '@panzoom/panzoom'
 import renderMathInElement from 'katex/contrib/auto-render'
 import _ky from 'ky'
 import { z } from 'zod'
 
-const PROVER_URL = 'http://localhost:3000'
-const LATEX_URL = 'http://localhost:3001'
-const NOTIFICATION_URL = 'http://localhost:8787'
+const PROVER_URL = 'http://192.168.0.140:3000'
+const LATEX_URL = 'http://192.168.0.140:3001'
+const NOTIFICATION_URL = 'http://127.0.0.1:8787'
 
 // override ky
 const ky = _ky.create({
@@ -33,6 +34,8 @@ Alpine.data('prover', () => ({
   isLoading: false,
   result: '',
   svgs: [] as string[],
+  svgStr: '',
+  zoom: false,
 
   init() {
     // render KaTeX
@@ -117,10 +120,10 @@ Alpine.data('prover', () => ({
       console.debug(text)
       // set result
       this.result += text
-      console.log(sequent)
-      console.log(tableau)
-      console.log(bussproofs)
-      console.log(ebproof)
+      // console.log(sequent)
+      // console.log(tableau)
+      // console.log(bussproofs)
+      // console.log(ebproof)
       // notify
       if (sequent) {
         ky.post(`${NOTIFICATION_URL}/tex-to-svg`, { body: sequent })
@@ -164,6 +167,14 @@ Alpine.data('prover', () => ({
     } finally {
       this.status = 'Prove'
       this.isLoading = false
+      const elem = document.getElementsByTagName('svg')[0]!
+      const panzoom = Panzoom(elem, {
+        maxScale: Number.POSITIVE_INFINITY,
+        step: 1,
+        pinchAndPan: true,
+        contain: 'outside',
+      })
+      elem.addEventListener('wheel', panzoom.zoomWithWheel)
     }
   },
 

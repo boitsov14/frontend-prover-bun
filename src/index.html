@@ -29,7 +29,6 @@
       .svg svg {
         width: 100%;
         height: 100%;
-        cursor: pointer;
       }
     </style>
   </head>
@@ -128,7 +127,9 @@
         <pre x-text="result"></pre>
         <h3 x-show="svgs.length > 0">Proof Tree (click!):</h3>
         <template x-for="svg in svgs" :key="svg">
-          <div x-html="svg" class="svg"></div>
+          <div class="svg">
+            <div x-html="svg"></div>
+          </div>
         </template>
       </div>
       <h3>Examples (click!):</h3>
