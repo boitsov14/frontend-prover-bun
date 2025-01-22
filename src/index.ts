@@ -33,9 +33,9 @@ Alpine.data('prover', () => ({
   status: 'Prove',
   isLoading: false,
   result: '',
-  svgs: [] as string[],
-  svgStr: '',
-  zoom: false,
+  proofs: [] as [string, string][],
+  downloadingData: '',
+  downloadingType: '',
 
   init() {
     // render KaTeX
@@ -71,7 +71,7 @@ Alpine.data('prover', () => ({
       this.isLoading = true
       // clear result
       this.result = ''
-      this.svgs = []
+      this.proofs = []
       // update url
       history.pushState({}, '', `?formula=${encodeURIComponent(this.formula)}`)
       // create json
@@ -183,7 +183,7 @@ Alpine.data('prover', () => ({
     let result = `Generate SVG(${type}):\n`
     if (response.headers.get('Content-Type') === 'image/svg+xml') {
       const svg = await response.text()
-      this.svgs.push(svg)
+      this.proofs.push([svg, tex])
       result += 'Success'
       // notify
       ky.post(`${NOTIFICATION_URL}/text`, { body: result })
@@ -195,6 +195,77 @@ Alpine.data('prover', () => ({
       // notify
       ky.post(`${NOTIFICATION_URL}/text`, { body: result })
       console.debug(result)
+    }
+  },
+
+  async downloadSvg(svg: string) {
+    this.downloadingData = svg
+    this.downloadingType = 'svg'
+    const blob = new Blob([svg])
+    // wait for 1 second
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'proof.svg'
+    a.click()
+    URL.revokeObjectURL(url)
+    this.downloadingData = ''
+    this.downloadingType = ''
+  },
+
+  async downloadPng(tex: string) {
+    this.downloadingData = tex
+    this.downloadingType = 'png'
+    this.result += 'Downloading PNG\n'
+    try {
+      const response = await ky.post(`${LATEX_URL}/png`, {
+        body: tex,
+      })
+      // check Content-Type
+      if (response.headers.get('Content-Type') !== 'image/png') {
+        throw new Error('Invalid response type')
+      }
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'proof.png'
+      a.click()
+      URL.revokeObjectURL(url)
+      this.result += 'Success\n'
+    } catch (e) {
+      console.error(e)
+      this.result += 'Failed: Unexpected error\n'
+    } finally {
+      this.downloadingData = ''
+      this.downloadingType = ''
+    }
+  },
+
+  async downloadPdf(tex: string) {
+    this.downloadingData = tex
+    this.downloadingType = 'pdf'
+    this.result += 'Downloading PDF\n'
+    try {
+      const response = await ky.post(`${LATEX_URL}/pdf`, { body: tex })
+      // check Content-Type
+      if (response.headers.get('Content-Type') !== 'application/pdf') {
+        throw new Error('Invalid response type')
+      }
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'proof.pdf'
+      a.click()
+      URL.revokeObjectURL(url)
+      this.result += 'Success\n'
+    } catch {
+      this.result += 'Failed: Unexpected error\n'
+    } finally {
+      this.downloadingData = ''
+      this.downloadingType = ''
     }
   },
 }))
