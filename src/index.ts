@@ -167,14 +167,17 @@ Alpine.data('prover', () => ({
     } finally {
       this.status = 'Prove'
       this.isLoading = false
-      const elem = document.getElementsByTagName('svg')[0]!
-      const panzoom = Panzoom(elem, {
-        maxScale: Number.POSITIVE_INFINITY,
-        step: 1,
-        pinchAndPan: true,
-        contain: 'outside',
-      })
-      elem.addEventListener('wheel', panzoom.zoomWithWheel)
+      for (const elem of document.getElementsByTagName('svg')) {
+        const panzoom = Panzoom(elem, {
+          maxScale: Number.POSITIVE_INFINITY,
+          step: 1,
+          pinchAndPan: true,
+          contain: 'outside',
+        })
+        elem.addEventListener('wheel', panzoom.zoomWithWheel)
+      }
+      // scroll to result
+      document.getElementById('result')!.scrollIntoView({ behavior: 'smooth' })
     }
   },
 
