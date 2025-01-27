@@ -8,9 +8,6 @@
       "all": true,
       "style": {
         "noNonNullAssertion": "off"
-      },
-      "suspicious": {
-        "noConsole": "off"
       }
     }
   },

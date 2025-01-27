@@ -12,6 +12,22 @@ const NOTIFICATION_URL = 'http://127.0.0.1:8787'
 // override ky
 const ky = _ky.create({
   retry: { methods: ['post'] },
+  hooks: {
+    beforeRequest: [
+      async request => {
+        if (request.url === `${NOTIFICATION_URL}/text`) {
+          try {
+            const body = await request.clone().text()
+            // biome-ignore lint/suspicious/noConsole:
+            console.debug(body)
+          } catch (e) {
+            // biome-ignore lint/suspicious/noConsole:
+            console.error(e)
+          }
+        }
+      },
+    ],
+  },
 })
 
 Alpine.data('prover', () => ({
@@ -70,9 +86,9 @@ Alpine.data('prover', () => ({
       // create json
       const json = this.makeJson()
       // notify
-      const pre = JSON.stringify({ lang: this.lang, ...json }, null, 4)
-      ky.post(`${NOTIFICATION_URL}/text`, { body: pre })
-      console.debug(pre)
+      ky.post(`${NOTIFICATION_URL}/text`, {
+        body: JSON.stringify({ lang: this.lang, ...json }, null, 4),
+      })
       // prove
       const response = await ky.post(PROVER_URL, {
         json: json,
@@ -90,7 +106,6 @@ Alpine.data('prover', () => ({
         .parse(await response.json())
       // notify
       ky.post(`${NOTIFICATION_URL}/text`, { body: text })
-      console.debug(text)
       // set result
       this.result += text
       // console.log(sequent)
@@ -135,7 +150,6 @@ Alpine.data('prover', () => ({
       ky.post(`${NOTIFICATION_URL}/text`, {
         body: `Browser: Unexpected error: ${e}`,
       })
-      console.debug(`Browser: Unexpected error: ${e}`)
       this.result += 'Failed: Unexpected error\n'
     } finally {
       this.status = 'Prove'
@@ -181,14 +195,11 @@ Alpine.data('prover', () => ({
       result += 'Success'
       // notify
       ky.post(`${NOTIFICATION_URL}/text`, { body: result })
-      console.debug(result)
     } else {
-      const error = await response.text()
-      result += `${error}`
+      result += await response.text()
       this.result += result
       // notify
       ky.post(`${NOTIFICATION_URL}/text`, { body: result })
-      console.debug(result)
     }
   },
 
@@ -229,7 +240,10 @@ Alpine.data('prover', () => ({
       URL.revokeObjectURL(url)
       this.result += 'Success\n'
     } catch (e) {
-      console.error(e)
+      // notify
+      ky.post(`${NOTIFICATION_URL}/text`, {
+        body: `Browser: Unexpected error: ${e}`,
+      })
       this.result += 'Failed: Unexpected error\n'
     } finally {
       this.downloadingData = ''
@@ -255,7 +269,11 @@ Alpine.data('prover', () => ({
       a.click()
       URL.revokeObjectURL(url)
       this.result += 'Success\n'
-    } catch {
+    } catch (e) {
+      // notify
+      ky.post(`${NOTIFICATION_URL}/text`, {
+        body: `Browser: Unexpected error: ${e}`,
+      })
       this.result += 'Failed: Unexpected error\n'
     } finally {
       this.downloadingData = ''
