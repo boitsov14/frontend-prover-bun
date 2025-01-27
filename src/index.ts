@@ -51,24 +51,6 @@ Alpine.data('prover', () => ({
     this.prove()
   },
 
-  makeJson() {
-    if (this.lang === 'kotlin') {
-      return {
-        formula: this.formula,
-        timeout: this.timeout,
-        bussproofs: this.bussproofs,
-        ebproof: this.ebproof,
-      }
-    }
-    return {
-      formula: this.formula,
-      timeout: this.timeout,
-      sequent: this.sequent,
-      tableau: this.tableau,
-      debug: this.debug,
-    }
-  },
-
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity:
   async prove() {
     try {
@@ -169,6 +151,24 @@ Alpine.data('prover', () => ({
       }
       // scroll to result
       document.getElementById('result')!.scrollIntoView({ behavior: 'smooth' })
+    }
+  },
+
+  makeJson() {
+    if (this.lang === 'kotlin') {
+      return {
+        formula: this.formula,
+        timeout: this.timeout,
+        bussproofs: this.bussproofs,
+        ebproof: this.ebproof,
+      }
+    }
+    return {
+      formula: this.formula,
+      timeout: this.timeout,
+      sequent: this.sequent,
+      tableau: this.tableau,
+      debug: this.debug,
     }
   },
 
