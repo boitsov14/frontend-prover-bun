@@ -11,15 +11,17 @@ const NOTIFICATION_URL = 'http://127.0.0.1:8787'
 
 // override ky
 const ky = _ky.create({
+  // enable retry for post
   retry: { methods: ['post'] },
+  // console debug request body before sending
   hooks: {
     beforeRequest: [
       async request => {
+        // only for notification text
         if (request.url === `${NOTIFICATION_URL}/text`) {
           try {
-            const body = await request.clone().text()
             // biome-ignore lint/suspicious/noConsole:
-            console.debug(body)
+            console.debug(await request.clone().text())
           } catch (e) {
             // biome-ignore lint/suspicious/noConsole:
             console.error(e)
@@ -31,6 +33,7 @@ const ky = _ky.create({
 })
 
 Alpine.data('prover', () => ({
+  // initial values
   formula: '',
   lang: 'kotlin',
   sequent: true,
@@ -39,7 +42,7 @@ Alpine.data('prover', () => ({
   ebproof: false,
   timeout: 3,
   debug: false,
-  status: 'Prove',
+  button: 'Prove',
   isLoading: false,
   result: '',
   proofs: [] as [string, string][],
@@ -49,13 +52,15 @@ Alpine.data('prover', () => ({
   init() {
     // render KaTeX
     renderMathInElement(document.body, {
+      // use $...$ as inline math
       delimiters: [{ left: '$', right: '$', display: false }],
+      // not throw error
       throwOnError: false,
     })
     // get formula from url parameter
     const formula = new URLSearchParams(location.search).get('formula')
+    // set formula
     if (formula) {
-      // set formula
       this.formula = decodeURIComponent(formula)
     }
   },
@@ -67,15 +72,14 @@ Alpine.data('prover', () => ({
     this.prove()
   },
 
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity:
   async prove() {
     try {
-      // close details
+      // close options
       document.querySelector('details')!.open = false
-      // scroll to top
+      // scroll to top smoothly
       window.scrollTo({ top: 0, behavior: 'smooth' })
-      // set status
-      this.status = 'Proving'
+      // set button text
+      this.button = 'Proving'
       // set loading true
       this.isLoading = true
       // clear result
@@ -84,65 +88,55 @@ Alpine.data('prover', () => ({
       // update url
       history.pushState({}, '', `?formula=${encodeURIComponent(this.formula)}`)
       // create json
-      const json = this.makeJson()
+      const json =
+        this.lang === 'rust'
+          ? {
+              formula: this.formula,
+              timeout: this.timeout,
+              sequent: this.sequent,
+              tableau: this.tableau,
+              debug: this.debug,
+            }
+          : {
+              formula: this.formula,
+              timeout: this.timeout,
+              bussproofs: this.bussproofs,
+              ebproof: this.ebproof,
+            }
       // notify
       ky.post(`${NOTIFICATION_URL}/text`, {
         body: JSON.stringify({ lang: this.lang, ...json }, null, 4),
       })
       // prove
-      const response = await ky.post(PROVER_URL, {
-        json: json,
-        timeout: this.timeout * 1000 + 5000,
-      })
-      // parse json
-      const { text, sequent, tableau, bussproofs, ebproof } = z
+      const response = await ky
+        .post(PROVER_URL, {
+          json: json,
+          timeout: this.timeout * 1000 + 5000,
+        })
+        .json()
+      // parse response
+      const { text, proofs } = z
         .object({
           text: z.string(),
-          sequent: z.string().optional(),
-          tableau: z.string().optional(),
-          bussproofs: z.string().optional(),
-          ebproof: z.string().optional(),
+          proofs: z.record(z.string()),
         })
-        .parse(await response.json())
-      // notify
+        .parse(response)
+      // notify text
       ky.post(`${NOTIFICATION_URL}/text`, { body: text })
       // set result
       this.result += text
-      // console.log(sequent)
-      // console.log(tableau)
-      // console.log(bussproofs)
-      // console.log(ebproof)
-      // notify
-      if (sequent) {
-        ky.post(`${NOTIFICATION_URL}/tex-to-svg`, { body: sequent })
+      // notify tex
+      for (const tex of Object.values(proofs)) {
+        ky.post(`${NOTIFICATION_URL}/tex-to-svg`, { body: tex })
       }
-      if (tableau) {
-        ky.post(`${NOTIFICATION_URL}/tex-to-svg`, { body: tableau })
-      }
-      if (bussproofs) {
-        ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: bussproofs })
-      }
-      if (ebproof) {
-        ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: ebproof })
-      }
-      // set status
-      this.status = 'Generating SVG'
+      // set button
+      this.button = 'Generating SVG'
       // generate SVG concurrently
-      const promises = [] as Promise<void>[]
-      if (sequent) {
-        promises.push(this.generateSvg(sequent, 'sequent'))
-      }
-      if (tableau) {
-        promises.push(this.generateSvg(tableau, 'tableau'))
-      }
-      if (bussproofs) {
-        promises.push(this.generateSvg(bussproofs, 'bussproofs'))
-      }
-      if (ebproof) {
-        promises.push(this.generateSvg(ebproof, 'ebproof'))
-      }
-      // wait for all promises
-      await Promise.allSettled(promises)
+      await Promise.allSettled(
+        Object.entries(proofs).map(([type, tex]) =>
+          this.generateSvg(tex, type),
+        ),
+      )
       // notify
       ky.post(`${NOTIFICATION_URL}/text`, { body: 'Done' })
     } catch (e) {
@@ -150,10 +144,14 @@ Alpine.data('prover', () => ({
       ky.post(`${NOTIFICATION_URL}/text`, {
         body: `Browser: Unexpected error: ${e}`,
       })
+      // set error
       this.result += 'Failed: Unexpected error\n'
     } finally {
-      this.status = 'Prove'
+      // reset button text
+      this.button = 'Prove'
+      // reset loading false
       this.isLoading = false
+      // add panzoom to SVG
       for (const elem of document.getElementsByTagName('svg')) {
         const panzoom = Panzoom(elem, {
           maxScale: Number.POSITIVE_INFINITY,
@@ -161,28 +159,11 @@ Alpine.data('prover', () => ({
           pinchAndPan: true,
           contain: 'outside',
         })
+        // enable wheel zoom
         elem.addEventListener('wheel', panzoom.zoomWithWheel)
       }
-      // scroll to result
+      // scroll to result smoothly
       document.getElementById('result')!.scrollIntoView({ behavior: 'smooth' })
-    }
-  },
-
-  makeJson() {
-    if (this.lang === 'kotlin') {
-      return {
-        formula: this.formula,
-        timeout: this.timeout,
-        bussproofs: this.bussproofs,
-        ebproof: this.ebproof,
-      }
-    }
-    return {
-      formula: this.formula,
-      timeout: this.timeout,
-      sequent: this.sequent,
-      tableau: this.tableau,
-      debug: this.debug,
     }
   },
 
@@ -203,16 +184,28 @@ Alpine.data('prover', () => ({
     }
   },
 
-  async downloadSvg(svg: string) {
+  downloadSvg(svg: string) {
     this.downloadingData = svg
     this.downloadingType = 'svg'
     const blob = new Blob([svg])
-    // wait for 1 second
-    await new Promise(resolve => setTimeout(resolve, 1000))
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
     a.download = 'proof.svg'
+    a.click()
+    URL.revokeObjectURL(url)
+    this.downloadingData = ''
+    this.downloadingType = ''
+  },
+
+  downloadTex(tex: string) {
+    this.downloadingData = tex
+    this.downloadingType = 'tex'
+    const blob = new Blob([tex])
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'proof.tex'
     a.click()
     URL.revokeObjectURL(url)
     this.downloadingData = ''
