@@ -122,40 +122,49 @@
         </fieldset>
         <button type="submit" :aria-busy="isLoading" x-text="button"></button>
       </form>
-      <div x-show="result !== ''">
-        <h3 id="result">Result:</h3>
-        <pre x-text="result"></pre>
-        <h3 x-show="proofs.length > 0">Proof Tree (click!):</h3>
-        <template x-for="[svg, tex] in proofs" :key="svg">
-          <div>
-            <div class="svg">
-              <div x-html="svg"></div>
-            </div>
-            <a
-              href=""
-              @click.prevent="downloadSvg(svg)"
-              :aria-busy="downloadingData === svg && downloadingType === 'svg'"
-            >
-              Download SVG
-            </a>
-            <br />
-            <a
-              href=""
-              @click.prevent="downloadPng(tex)"
-              :aria-busy="downloadingData === tex && downloadingType === 'png'"
-            >
-              Download PNG
-            </a>
-            <br />
-            <a
-              href=""
-              @click.prevent="downloadPdf(tex)"
-              :aria-busy="downloadingData === tex && downloadingType === 'pdf'"
-            >
-              Download PDF
-            </a>
+      <div id="result">
+        <div x-show="result !== ''">
+          <div x-show="parsedFormula !== ''">
+            <h3>Input:</h3>
+            <section
+              x-html="parsedFormula"
+              style="overflow-x: auto; white-space: nowrap"
+            ></section>
           </div>
-        </template>
+          <h3>Result:</h3>
+          <pre x-text="result" style="max-height: 6em"></pre>
+          <h3 x-show="proofs.length > 0">Proof Tree (click!):</h3>
+          <template x-for="[tex, svg] in proofs" :key="tex">
+            <div>
+              <div class="svg">
+                <div x-html="svg"></div>
+              </div>
+              <a
+                href=""
+                @click.prevent="downloadSvg(svg)"
+                :aria-busy="downloadingData === svg && downloadingType === 'svg'"
+              >
+                Download SVG
+              </a>
+              <br />
+              <a
+                href=""
+                @click.prevent="downloadPng(tex)"
+                :aria-busy="downloadingData === tex && downloadingType === 'png'"
+              >
+                Download PNG
+              </a>
+              <br />
+              <a
+                href=""
+                @click.prevent="downloadPdf(tex)"
+                :aria-busy="downloadingData === tex && downloadingType === 'pdf'"
+              >
+                Download PDF
+              </a>
+            </div>
+          </template>
+        </div>
       </div>
       <h3>Examples (click!):</h3>
       <ul>

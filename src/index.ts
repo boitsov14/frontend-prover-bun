@@ -1,6 +1,7 @@
 import Alpine from 'alpinejs'
 import 'katex/dist/katex.min.css'
 import Panzoom from '@panzoom/panzoom'
+import katex from 'katex'
 import renderMathInElement from 'katex/contrib/auto-render'
 import _ky from 'ky'
 import { z } from 'zod'
@@ -44,6 +45,7 @@ Alpine.data('prover', () => ({
   debug: false,
   button: 'Prove',
   isLoading: false,
+  parsedFormula: '',
   result: '',
   proofs: [] as [string, string][],
   downloadingData: '',
@@ -83,6 +85,7 @@ Alpine.data('prover', () => ({
       // set loading true
       this.isLoading = true
       // clear result
+      this.parsedFormula = ''
       this.result = ''
       this.proofs = []
       // update url
@@ -115,9 +118,10 @@ Alpine.data('prover', () => ({
         })
         .json()
       // parse response
-      const { text, proofs } = z
+      const { text, formula, proofs } = z
         .object({
           text: z.string(),
+          formula: z.string().optional(),
           proofs: z.record(z.string()),
         })
         .parse(response)
@@ -125,16 +129,27 @@ Alpine.data('prover', () => ({
       ky.post(`${NOTIFICATION_URL}/text`, { body: text })
       // set result
       this.result += text
+      // set parsed formula
+      if (formula) {
+        // replace \fCenter with \vdash
+        // render KaTeX
+        this.parsedFormula = katex.renderToString(
+          formula.replaceAll('\\fCenter', '\\vdash'),
+          {
+            throwOnError: false,
+          },
+        )
+      }
       // notify tex
       for (const tex of Object.values(proofs)) {
-        ky.post(`${NOTIFICATION_URL}/tex-to-svg`, { body: tex })
+        ky.post(`${NOTIFICATION_URL}/tex-to-png`, { body: tex })
       }
       // set button
       this.button = 'Generating SVG'
       // generate SVG concurrently
       await Promise.allSettled(
         Object.entries(proofs).map(([type, tex]) =>
-          this.generateSvg(tex, type),
+          this.generateSvg(type, tex),
         ),
       )
       // notify
@@ -167,14 +182,16 @@ Alpine.data('prover', () => ({
     }
   },
 
-  async generateSvg(tex: string, type: string): Promise<void> {
+  async generateSvg(type: string, tex: string): Promise<void> {
+    let result = `Start Generating SVG (${type}):\n`
+    // generate SVG
     const response = await ky.post(`${LATEX_URL}/svg`, { body: tex })
-    let result = `Generate SVG(${type}):\n`
+    // check Content-Type is SVG
     if (response.headers.get('Content-Type') === 'image/svg+xml') {
       const svg = await response.text()
-      this.proofs.push([svg, tex])
+      this.proofs.push([tex, svg])
       result += 'Success'
-      // notify
+      // notify result
       ky.post(`${NOTIFICATION_URL}/text`, { body: result })
     } else {
       result += await response.text()
