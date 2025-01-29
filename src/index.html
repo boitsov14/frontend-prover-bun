@@ -33,7 +33,7 @@
     </style>
   </head>
   <body>
-    <main>
+    <main style="max-width: 950px">
       <h1>Cool Prover</h1>
       <form @submit.prevent="prove">
         <fieldset>
@@ -139,29 +139,37 @@
               <div class="svg">
                 <div x-html="svg"></div>
               </div>
-              <a
-                href=""
-                @click.prevent="downloadSvg(svg)"
-                :aria-busy="downloadingData === svg && downloadingType === 'svg'"
-              >
-                Download SVG
-              </a>
-              <br />
-              <a
-                href=""
-                @click.prevent="downloadPng(tex)"
-                :aria-busy="downloadingData === tex && downloadingType === 'png'"
-              >
-                Download PNG
-              </a>
-              <br />
-              <a
-                href=""
-                @click.prevent="downloadPdf(tex)"
-                :aria-busy="downloadingData === tex && downloadingType === 'pdf'"
-              >
-                Download PDF
-              </a>
+              <h2>Download:</h2>
+              <div style="display: flex; gap: 1rem">
+                <button
+                  class="download-btn"
+                  @click="downloadTex(tex)"
+                  :aria-busy="downloadingData === tex && downloadingType === 'tex'"
+                >
+                  TeX
+                </button>
+                <button
+                  class="download-btn"
+                  @click="downloadSvg(svg)"
+                  :aria-busy="downloadingData === svg && downloadingType === 'svg'"
+                >
+                  SVG
+                </button>
+                <button
+                  class="download-btn"
+                  @click="downloadPng(tex)"
+                  :aria-busy="downloadingData === tex && downloadingType === 'png'"
+                >
+                  PNG
+                </button>
+                <button
+                  class="download-btn"
+                  @click="downloadPdf(tex)"
+                  :aria-busy="downloadingData === tex && downloadingType === 'pdf'"
+                >
+                  PDF
+                </button>
+              </div>
             </div>
           </template>
         </div>
