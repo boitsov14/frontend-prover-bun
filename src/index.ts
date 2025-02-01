@@ -47,7 +47,7 @@ Alpine.data('prover', () => ({
   isLoading: false,
   parsedFormula: '',
   result: '',
-  proofs: [] as [string, string][],
+  proofs: [] as [string, string, string][],
   downloadingData: '',
   downloadingType: '',
 
@@ -189,7 +189,7 @@ Alpine.data('prover', () => ({
     // check Content-Type is SVG
     if (response.headers.get('Content-Type') === 'image/svg+xml') {
       const svg = await response.text()
-      this.proofs.push([tex, svg])
+      this.proofs.push([type, tex, svg])
       result += 'Success'
       // notify result
       ky.post(`${NOTIFICATION_URL}/text`, { body: result })
