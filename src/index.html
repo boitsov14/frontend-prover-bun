@@ -33,7 +33,7 @@
     </style>
   </head>
   <body>
-    <main style="max-width: 950px">
+    <main style="max-width: 900px">
       <h1>Cool Prover</h1>
       <form @submit.prevent="prove">
         <fieldset>
@@ -124,23 +124,36 @@
       </form>
       <div id="result">
         <div x-show="result !== ''">
-          <div x-show="parsedFormula !== ''">
-            <h3>Input:</h3>
-            <section
-              x-html="parsedFormula"
-              style="overflow-x: auto; white-space: nowrap"
-            ></section>
-          </div>
           <h3>Result:</h3>
-          <pre x-text="result" style="max-height: 7em"></pre>
+          <div style="overflow-x: auto">
+            <table>
+              <colgroup>
+                <col style="width: 0" />
+              </colgroup>
+              <tr x-show="parsedFormula !== ''">
+                <th>Input</th>
+                <td style="white-space: nowrap" x-html="parsedFormula"></td>
+              </tr>
+              <tr x-show="parsedFormula !== ''">
+                <th>Result</th>
+                <td>Provable</td>
+              </tr>
+              <tr x-show="parsedFormula !== ''">
+                <th>Time</th>
+                <td>12ms</td>
+              </tr>
+            </table>
+          </div>
+          <h3>Logs:</h3>
+          <pre x-text="result" style="max-height: 6em"></pre>
           <h3 x-show="proofs.length > 0">Proof Tree (click!):</h3>
           <template x-for="[type, tex, svg] in proofs" :key="type">
             <section>
-              <strong x-text="`${type}:`"></strong>
+              <p><strong x-text="`${type}:`"></strong></p>
               <div class="svg">
                 <div x-html="svg"></div>
               </div>
-              <strong>Download:</strong>
+              <p><strong>Download:</strong></p>
               <div style="display: flex; gap: 1rem">
                 <button
                   class="download-btn"
