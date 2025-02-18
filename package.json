@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "dev": "concurrently \"bun build --experimental-html --experimental-css src/index.html --outdir=dist --watch\" \"reload --browser --dir dist\"",
+    "dev": "concurrently \"bun build src/index.html --minify --outdir=dist --watch\" \"reload --browser --dir dist\"",
     "check": "bun biome check --write src",
-    "bundle": "bun build --experimental-html --experimental-css src/index.html --outdir=dist"
+    "bundle": "bun build src/index.html --minify --outdir=dist"
   },
   "dependencies": {
     "@panzoom/panzoom": "latest",
