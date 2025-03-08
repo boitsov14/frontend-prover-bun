@@ -5,10 +5,7 @@ import katex from 'katex'
 import renderMathInElement from 'katex/contrib/auto-render'
 import _ky from 'ky'
 import { z } from 'zod'
-
-const PROVER_URL = 'http://192.168.0.140:3000'
-const LATEX_URL = 'http://192.168.0.140:3001'
-const NOTIFICATION_URL = 'http://127.0.0.1:8787'
+import { LATEX_URL, NOTIFICATION_URL, PROVER_URL } from './config.ts'
 
 // override ky
 const ky = _ky.create({
